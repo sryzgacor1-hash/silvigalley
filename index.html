@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Personal Sweet Gallery</title>
+    <style>
+        :root {
+            --bg-soft: #fff9fb;
+            --accent: #ffb7b2;
+            --frame-color: #ffdac1;
+            --text-main: #ff9aa2;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: var(--bg-soft);
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+            color: #555;
+        }
+
+        header {
+            text-align: center;
+            padding: 80px 20px;
+            background: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+        }
+
+        header h1 {
+            color: var(--text-main);
+            font-size: 2.2rem;
+            margin: 0;
+            font-weight: 300;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+        }
+
+        .gallery-container {
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 50px 20px 150px 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 120px;
+        }
+
+        /* Bingkai Bergelombang & Animasi */
+        .frame-wrapper {
+            position: relative;
+            padding: 12px;
+            background: white;
+            border: 15px solid var(--frame-color);
+            border-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cpath d='M0,0 Q25,20 50,0 T100,0 V100 Q75,80 50,100 T0,100 Z' fill='%23ffdac1'/%3E%3C/svg%3E") 30 stretch;
+            opacity: 0.1;
+            filter: blur(15px);
+            transform: scale(0.85);
+            transition: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            cursor: pointer;
+        }
+
+        .frame-wrapper::before { content: '🌸'; position: absolute; top: -35px; left: -35px; font-size: 35px; }
+        .frame-wrapper::after { content: '💖'; position: absolute; bottom: -35px; right: -35px; font-size: 35px; }
+
+        .photo-card {
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            border-radius: 5px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .photo-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        /* Overlay */
+        .photo-overlay {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(255, 182, 193, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: 0.3s;
+        }
+
+        .frame-wrapper:hover .photo-overlay { opacity: 1; }
+
+        .photo-text {
+            color: white;
+            font-weight: bold;
+            border: 2px solid white;
+            padding: 5px 20px;
+            border-radius: 30px;
+        }
+
+        /* Modal Preview */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(255, 255, 255, 0.98);
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        .preview-box {
+            position: relative;
+            padding: 10px;
+            background: white;
+            border: 10px solid var(--accent);
+            border-radius: 20px;
+            max-width: 85%;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+        }
+
+        .btn-download {
+            margin-top: 25px;
+            padding: 15px 40px;
+            background: var(--text-main);
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>SILVIANA PUTRI</h1>
+        <p>Koleksi Foto Wanita Favoritku Silviana Putri.</p>
+    </header>
+
+    <div class="gallery-container" id="gallery"></div>
+
+    <div id="photoModal" class="modal">
+        <div class="preview-box">
+            <img id="modalImg" style="max-width: 100%; border-radius: 10px; display: block;">
+        </div>
+        <a id="downloadBtn" href="#" class="btn-download">Simpan Foto ✨</a>
+        <p onclick="closePreview()" style="cursor:pointer; color: #ccc; margin-top: 20px;">TUTUP</p>
+    </div>
+
+    <script>
+        const container = document.getElementById('gallery');
+        const modal = document.getElementById('photoModal');
+        const modalImg = document.getElementById('modalImg');
+        const downloadBtn = document.getElementById('downloadBtn');
+
+        // GANTI LINK DI BAWAH INI DENGAN FOTO PRIBADIMU
+        const photoURLs = [
+            "silvi30.jpg",
+            "silvi1.jpg",
+            "silvi2.jpg",
+            "silvi3.jpg",
+            "silvi4.jpg",
+            "silvi5.jpg",
+            "silvi6.jpg",
+            "silvi7.jpg",
+            "silvi8.jpg",
+            "silvi9.jpg",
+            "silvi10.jpg",
+            "silvi11.jpg",
+            "silvi12.jpg",
+            "silvi13.jpg",
+            "silvi14.jpg",
+            "silvi15.jpg",
+            "silvi16.jpg",
+            "silvi17.jpg",
+            "silvi18.jpg",
+            "silvi19.jpg",
+            "silvi20.jpg",
+            "silvi21.jpg",
+            "silvi22.jpg",
+            "silvi23.jpg",
+            "silvi24.jpg",
+            "silvi25.jpg",
+            "silvi26.jpg",
+            "silvi27.jpg",
+            "silvi28.jpg",
+            "silvi29.jpg"
+            // Tambahkan terus sampai 30 foto...
+        ];
+
+        function renderGallery() {
+            photoURLs.forEach((src) => {
+                const wrapper = document.createElement('div');
+                wrapper.className = 'frame-wrapper';
+                wrapper.onclick = () => openPreview(src);
+                wrapper.innerHTML = `<div class="photo-card"><img src="${src}"><div class="photo-overlay"><div class="photo-text">VIEW</div></div></div>`;
+                container.appendChild(wrapper);
+            });
+        }
+
+        function updateScroll() {
+            const wrappers = document.querySelectorAll('.frame-wrapper');
+            const centerY = window.innerHeight / 2;
+            wrappers.forEach(el => {
+                const rect = el.getBoundingClientRect();
+                const dist = Math.abs(centerY - (rect.top + rect.height/2));
+                if (dist < 200) {
+                    el.style.opacity = "1"; el.style.filter = "blur(0px)"; el.style.transform = "scale(1)";
+                } else {
+                    let f = Math.min((dist - 200) / 450, 1);
+                    el.style.opacity = 1 - (f * 0.85); el.style.filter = `blur(${f * 15}px)`; el.style.transform = `scale(${1 - (f * 0.12)})`;
+                }
+            });
+        }
+
+        function openPreview(src) {
+            modal.style.display = 'flex';
+            modalImg.src = src;
+            
+            // Perbaikan fitur unduh
+            downloadBtn.onclick = (e) => {
+                e.preventDefault();
+                const link = document.createElement('a');
+                link.href = src;
+                link.download = 'my-photo.jpg';
+                link.target = '_blank';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            };
+        }
+
+        function closePreview() { modal.style.display = 'none'; }
+        window.onclick = (e) => { if (e.target == modal) closePreview(); };
+
+        renderGallery();
+        window.addEventListener('scroll', updateScroll);
+        window.addEventListener('load', updateScroll);
+    </script>
+</body>
+</html>
